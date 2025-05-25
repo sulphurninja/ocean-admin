@@ -9,7 +9,7 @@ const userSchema = new mongoose.Schema({
   devices: { type: [String], default: [] },
   role: {
     type: String,
-    enum: ['admin', 'seller', 'user'],
+    enum: ['admin', 'subadmin', 'seller', 'user'],
     default: 'user'
   },
   wallet: {

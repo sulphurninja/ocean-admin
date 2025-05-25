@@ -21,7 +21,12 @@ import {
   DollarSign,
   ChevronRight,
   User as UserIcon,
+  Layout,
+  Store,
+  Shield,
+  Plus,
 } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -105,7 +110,7 @@ export default function AdminDashboard() {
             <div className="relative w-10 h-10 flex-shrink-0">
               <div className="absolute inset-0 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500"></div>
               <div className="absolute inset-0.5 rounded-full bg-white flex items-center justify-center">
-               <img src='/logo.png'/>
+                <img src='/logo.png' />
               </div>
             </div>
             <div>
@@ -195,7 +200,73 @@ export default function AdminDashboard() {
             </CardContent>
           </Card>
         </div>
+        <Tabs defaultValue="dashboard" className="space-y-6">
+          <TabsList className="bg-white p-1 shadow-md rounded-lg border w-full flex justify-start h-14">
+            <TabsTrigger value="dashboard">
+              <Layout className="h-5 w-5 mr-2" /> Dashboard
+            </TabsTrigger>
+            <TabsTrigger value="users">
+              <Users className="h-5 w-5 mr-2" /> Users
+            </TabsTrigger>
+            <TabsTrigger value="sellers">
+              <Store className="h-5 w-5 mr-2" /> Sellers
+            </TabsTrigger>
+            <TabsTrigger value="subadmins">
+              <Shield className="h-5 w-5 mr-2" /> Sub-Admins
+            </TabsTrigger>
+          </TabsList>
 
+          {/* Other tabs content */}
+
+          <TabsContent value="subadmins">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-gray-900">Sub-Admin Management</h2>
+              <Button
+                onClick={() => router.push('/admin/subadmins')}
+                className="bg-indigo-600 hover:bg-indigo-700 text-white"
+              >
+                <Shield className="h-4 w-4 mr-2" /> Manage Sub-Admins
+              </Button>
+            </div>
+
+            {/* Display subadmin stats */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-xl">Total Sub-Admins</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold">{stats.totalSubadmins || 0}</div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-xl">Sellers Created by Sub-Admins</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold">{stats.subadminCreatedSellers || 0}</div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-xl">Sub-Admin Wallet Balance</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold">₹{stats.totalSubadminBalance || 0}</div>
+                </CardContent>
+              </Card>
+            </div>
+
+            <Button
+              onClick={() => router.push('/admin/subadmins/create')}
+              className="bg-green-600 hover:bg-green-700 text-white"
+            >
+              <Plus className="h-4 w-4 mr-2" /> Create New Sub-Admin
+            </Button>
+          </TabsContent>
+        </Tabs>
         {/* Management Cards */}
         <h2 className="text-xl font-bold text-gray-800 pt-4">Quick Actions</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

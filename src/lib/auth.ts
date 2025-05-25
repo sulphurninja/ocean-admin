@@ -41,6 +41,72 @@ export async function authenticateUser(req: NextRequest) {
   }
 }
 
+
+
+// Check if the user is a subadmin
+// Check if the user is a subadmin
+export async function requireSubadmin(req: NextRequest) {
+  await connectDB();
+
+  try {
+    const token = req.headers.get('authorization')?.replace('Bearer ', '');
+
+    if (!token) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
+    // Use the same JWT_SECRET as in your generateToken function
+    const decoded = jwt.verify(token, JWT_SECRET) as any;
+
+    // Use 'id' instead of 'userId' to match your token structure
+    const userId = decoded.id;
+
+    if (!userId) {
+      return NextResponse.json(
+        { error: 'Invalid token format' },
+        { status: 401 }
+      );
+    }
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      console.error(`User not found for ID: ${userId}`);
+      return NextResponse.json(
+        { error: 'User not found' },
+        { status: 404 }
+      );
+    }
+
+    // Check if user is a subadmin
+    if (user.role !== 'subadmin') {
+      return NextResponse.json(
+        { error: 'Forbidden: Subadmin access required' },
+        { status: 403 }
+      );
+    }
+
+    return user;
+  } catch (error) {
+    console.error('Auth error:', error);
+
+    if (error.name === 'JsonWebTokenError') {
+      return NextResponse.json(
+        { error: 'Invalid token' },
+        { status: 401 }
+      );
+    }
+
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+
 export async function requireAuth(req: NextRequest) {
   const user = await authenticateUser(req);
 

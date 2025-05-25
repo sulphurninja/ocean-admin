@@ -28,14 +28,41 @@ export async function POST(req: Request) {
 
     const token = generateToken(user);
 
+    // Build response data based on user role
+    let userData = {
+      id: user._id,
+      username: user.subs_credentials.user_name,
+      role: user.role || (user.isAdmin ? 'admin' : 'user'),
+      isAdmin: user.isAdmin
+    };
+
+    // Add role-specific data
+    if (user.role === 'admin' || user.isAdmin) {
+      // No additional data needed for admin
+    } else if (user.role === 'subadmin') {
+      // Add wallet for subadmins
+      userData = {
+        ...userData,
+        wallet: user.wallet
+      };
+    } else if (user.role === 'seller') {
+      // Add wallet and user creation charge for sellers
+      userData = {
+        ...userData,
+        wallet: user.wallet,
+        userCreationCharge: user.userCreationCharge
+      };
+    } else {
+      // For regular users, add subscription info
+      userData = {
+        ...userData,
+        plan_expiry: user.plan_expiry,
+        devices: user.devices
+      };
+    }
+
     return NextResponse.json({
-      user: {
-        id: user._id,
-        username: user.subs_credentials.user_name,
-        role: user.role || (user.isAdmin ? 'admin' : 'user'),
-        isAdmin: user.isAdmin,
-        wallet: user.role === 'seller' ? user.wallet : undefined
-      },
+      user: userData,
       token
     });
 

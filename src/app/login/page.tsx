@@ -54,6 +54,8 @@ export default function LoginPage() {
         router.push('/admin/dashboard');
       } else if (data.user.role === 'seller') {
         router.push('/seller/dashboard');
+      } else if (data.user.role === 'subadmin') {
+        router.push('/subadmin/dashboard');
       } else {
         router.push('/dashboard');
       }
@@ -80,7 +82,7 @@ export default function LoginPage() {
           <div className="relative w-16 h-16">
             <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500 to-cyan-400 animate-pulse"></div>
             <div className="absolute inset-1 rounded-full bg-white flex items-center justify-center">
-              <img src='/logo.png'/>
+              <img src='/logo.png' />
             </div>
           </div>
         </div>
